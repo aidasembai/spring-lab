@@ -11,7 +11,7 @@ public class Ticket {
 
     private final String id = UUID.randomUUID().toString().substring(0, 8);
 
-    public String id() {
+    public String getId() {
         return id;
     }
 }
