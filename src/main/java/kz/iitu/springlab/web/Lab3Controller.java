@@ -7,39 +7,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Map;
-
-import static java.util.Map.entry;
 
 @RestController
 @RequestMapping("/api/lab3")
 public class Lab3Controller {
 
-    private final AppProperties props;
-    private final EnvironmentBanner banner;
+    private final AppProperties appProperties;
+    private final EnvironmentBanner environmentBanner;
     private final Environment environment;
 
-    public Lab3Controller(AppProperties props, EnvironmentBanner banner, Environment environment) {
-        this.props = props;
-        this.banner = banner;
+    public Lab3Controller(AppProperties appProperties, EnvironmentBanner environmentBanner, Environment environment) {
+        this.appProperties = appProperties;
+        this.environmentBanner = environmentBanner;
         this.environment = environment;
     }
 
     @GetMapping("/config")
-    public Map<String, Object> config() {
+    public Map<String, Object> getConfig() {
         return Map.ofEntries(
-                entry("owner", props.owner()),
-                entry("group", props.group()),
-                entry("mailFrom", props.mail().from()),
-                entry("mailRetryCount", props.mail().retryCount()),
-                entry("mailTimeout", props.mail().timeout().toString()),
-                entry("mailEnabled", props.mail().enabled()),
-                entry("rateLimitRequestsPerMinute", props.rateLimit().requestsPerMinute()),
-                entry("rateLimitBurst", props.rateLimit().burst()),
-                entry("serverPort", environment.getProperty("server.port")),
-                entry("activeProfiles", Arrays.asList(environment.getActiveProfiles())),
-                entry("banner", banner.describe())
+                Map.entry("owner", appProperties.owner()),
+                Map.entry("group", appProperties.group()),
+                Map.entry("mail", appProperties.mail()),
+                Map.entry("rateLimit", appProperties.rateLimit()),
+                Map.entry("banner", environmentBanner.describe()),
+                Map.entry("activeProfiles", environment.getActiveProfiles()),
+                Map.entry("serverPort", environment.getProperty("server.port", "8080"))
         );
     }
 }

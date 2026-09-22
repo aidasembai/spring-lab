@@ -23,8 +23,9 @@ public record AppProperties(
             @DefaultValue("true") boolean enabled
     ) {}
 
+    // Variant 6: app.rate-limit
     public record RateLimit(
             @Positive @DefaultValue("60") int requestsPerMinute,
-            @Min(1) @Max(50) @DefaultValue("10") int burst
+            @Min(1) @Max(100) @DefaultValue("10") int burst
     ) {}
 }
