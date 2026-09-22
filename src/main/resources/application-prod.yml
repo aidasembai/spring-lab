@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+app:
+  mail:
+    enabled: true
+    retry-count: 5
+  rate-limit:
+    requests-per-minute: 120
+    burst: 20
+
+logging:
+  level:
+    kz.iitu: WARN
