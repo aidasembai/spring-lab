@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Catalogue</title>
+    <!-- Подключаем твой файл стилей app.css -->
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${title}">Catalogue</h1>
+
+    <!-- Форма поиска по автору -->
+    <form method="get" th:action="@{/books}">
+        <input type="text" name="author" th:value="${author}" placeholder="Filter by author...">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Таблица со списком книг -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Year</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}">1</td>
+            <td th:text="${book.title}">Book Title</td>
+            <td th:text="${book.author}">Author Name</td>
+            <td th:text="${book.year}">2026</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
