@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{book.new}">New book</title>
+    <!-- Правильный путь со слэшем, чтобы стили точно подгрузились -->
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
@@ -22,35 +23,49 @@
         </ul>
     </div>
 
-    <label th:text="#{book.title}">Title</label>
-    <input type="text" th:field="*{title}" th:errorclass="is-invalid">
-    <span class="error" th:if="${#fields.hasErrors('title')}"
-          th:errors="*{title}"></span>
+    <div style="margin-bottom: 15px;">
+        <label th:text="#{book.title}">Title</label><br>
+        <input type="text" th:field="*{title}" th:errorclass="is-invalid"><br>
+        <span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+    </div>
 
-    <label th:text="#{book.author}">Author</label>
-    <input type="text" th:field="*{author}" th:errorclass="is-invalid">
-    <span class="error" th:if="${#fields.hasErrors('author')}"
-          th:errors="*{author}"></span>
+    <div style="margin-bottom: 15px;">
+        <label th:text="#{book.author}">Author</label><br>
+        <input type="text" th:field="*{author}" th:errorclass="is-invalid"><br>
+        <span class="error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></span>
+    </div>
 
-    <label th:text="#{book.year}">Year</label>
-    <input type="number" th:field="*{year}" th:errorclass="is-invalid">
-    <span class="error" th:if="${#fields.hasErrors('year')}"
-          th:errors="*{year}"></span>
+    <div style="margin-bottom: 15px;">
+        <label th:text="#{book.year}">Year</label><br>
+        <input type="number" th:field="*{year}" th:errorclass="is-invalid"><br>
+        <span class="error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></span>
+    </div>
 
-    <label th:text="#{book.genre}">Genre</label>
-    <select th:field="*{genre}" th:errorclass="is-invalid">
-        <option value="">—</option>
-        <option th:each="g : ${genres}"
-                th:value="${g}" th:text="${g}"></option>
-    </select>
-    <span class="error" th:if="${#fields.hasErrors('genre')}"
-          th:errors="*{genre}"></span>
+    <div style="margin-bottom: 15px;">
+        <label th:text="#{book.genre}">Genre</label><br>
+        <select th:field="*{genre}" th:errorclass="is-invalid">
+            <option value="">—</option>
+            <option th:each="g : ${genres}" th:value="${g}" th:text="${g}"></option>
+        </select><br>
+        <span class="error" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></span>
+    </div>
 
-    <label>
-        <input type="checkbox" th:field="*{available}">
-        <span th:text="#{book.available}">Available</span>
-    </label>
-    <br><br>
+    <!-- Блок для Задания 6 (Multiple checkboxes) -->
+    <div style="margin-bottom: 15px;">
+        <label>Tags:</label><br>
+        <label><input type="checkbox" th:field="*{tags}" value="Fiction"> Fiction</label>
+        <label style="margin-left: 10px;"><input type="checkbox" th:field="*{tags}" value="Technology"> Technology</label>
+        <label style="margin-left: 10px;"><input type="checkbox" th:field="*{tags}" value="Science"> Science</label><br>
+        <span class="error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></span>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" th:field="*{available}">
+            <span th:text="#{book.available}">Available</span>
+        </label>
+    </div>
+
     <button type="submit" th:text="#{form.submit}">Save</button>
 </form>
 </body>
