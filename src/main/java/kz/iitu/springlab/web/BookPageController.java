@@ -1,10 +1,13 @@
 package kz.iitu.springlab.web;
 
+import jakarta.validation.Valid;
 import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,13 +31,32 @@ public class BookPageController {
         model.addAttribute("author", author);
         model.addAttribute("title", "Catalogue");
 
-        return "books/list";       // → templates/books/list.html
+        return "books/list";
+    }
+
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("form", new BookForm());
+        model.addAttribute("genres", Genre.values());
+        return "books/form";
     }
 
     @PostMapping
-    public String createBook(Book book, RedirectAttributes redirectAttributes) {
-        service.create(book); // <--- здесь обязательно service.create
-        redirectAttributes.addFlashAttribute("message", "Книга успешно добавлена!");
+    public String create(@Valid @ModelAttribute("form") BookForm form,
+                         BindingResult binding,
+                         Model model,
+                         RedirectAttributes redirect) {
+
+        if (binding.hasErrors()) {
+            model.addAttribute("genres", Genre.values());
+            return "books/form";
+        }
+
+        Book saved = service.create(new Book(null, form.getTitle(),
+                form.getAuthor(), form.getYear()));
+
+        redirect.addFlashAttribute("message",
+                "Book «" + saved.title() + "» has been added");
         return "redirect:/books";
     }
 }

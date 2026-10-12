@@ -1,6 +1,7 @@
 package kz.iitu.springlab.web;
 
 import kz.iitu.springlab.catalog.Book;
+import kz.iitu.springlab.catalog.BookNotFoundException;
 import kz.iitu.springlab.catalog.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,9 @@ public class BookRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> find(@PathVariable long id) {
+    public Book find(@PathVariable long id) {
         return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + id + " not found"));
     }
 
     @PostMapping
@@ -41,13 +41,11 @@ public class BookRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Book> update(@PathVariable long id, @RequestBody Book book) {
-        return service.findById(id)
-                .map(existing -> {
-                    Book updated = new Book(id, book.title(), book.author(), book.year());
-                    service.create(updated);
-                    return ResponseEntity.ok(updated);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Book existing = service.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + id + " not found"));
+        Book updated = new Book(id, book.title(), book.author(), book.year());
+        service.create(updated);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
@@ -56,6 +54,6 @@ public class BookRestController {
         if (deleted) {
             return ResponseEntity.noContent().build(); // 204 No Content
         }
-        return ResponseEntity.notFound().build();      // 404 Not Found
+        throw new BookNotFoundException("Book with id " + id + " not found");
     }
 }

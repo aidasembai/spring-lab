@@ -40,3 +40,21 @@ tr:hover {
     border-radius: 4px;
     margin-bottom: 15px;
 }
+
+/* Стили для валидации и ошибок */
+.is-invalid {
+    border: 2px solid red;
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+    display: block;
+}
+
+.alert {
+    background-color: #ffd2d2;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid red;
+}
