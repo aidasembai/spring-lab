@@ -2,7 +2,7 @@ package kz.iitu.springlab.web;
 
 import jakarta.validation.Valid;
 import kz.iitu.springlab.catalog.Book;
-import kz.iitu.springlab.catalog.BookService;
+import kz.iitu.springlab.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
