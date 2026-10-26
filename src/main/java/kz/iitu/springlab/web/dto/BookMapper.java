@@ -1,5 +1,6 @@
 package kz.iitu.springlab.web.dto;
 
+import kz.iitu.springlab.catalog.Author;
 import kz.iitu.springlab.catalog.Book;
 
 public class BookMapper {
@@ -8,13 +9,16 @@ public class BookMapper {
         if (book == null) {
             return null;
         }
+
+        String authorName = (book.getAuthor() != null) ? book.getAuthor().getName() : null;
+
         return new BookResponse(
-                book.id(),
-                book.title(),
-                book.author(),
-                book.year(),
-                book.genre(),
-                book.createdAt()
+                book.getId(),
+                book.getTitle(),
+                authorName,
+                book.getYear(),
+                book.getGenre(),
+                book.getCreatedAt()
         );
     }
 
@@ -22,13 +26,18 @@ public class BookMapper {
         if (request == null) {
             return null;
         }
-        return new Book(
-                null, // или id, если передается
-                request.title(),
-                request.author(),
-                request.year(),
-                request.genre(),
-                null  // или время создания, если задается автоматически
-        );
+        Book book = new Book();
+        book.setTitle(request.title());
+
+        // Создаем объект Author из переданного имени (или находим/создаем при необходимости)
+        if (request.author() != null) {
+            Author author = new Author();
+            author.setName(request.author());
+            book.setAuthor(author);
+        }
+
+        book.setYear(request.year());
+        book.setGenre(request.genre());
+        return book;
     }
 }

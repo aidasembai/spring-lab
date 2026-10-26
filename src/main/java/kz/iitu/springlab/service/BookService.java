@@ -4,6 +4,9 @@ import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookRepository;
 import kz.iitu.springlab.catalog.BookNotFoundException;
 import kz.iitu.springlab.catalog.DuplicateTitleException;
+import kz.iitu.springlab.catalog.Genre;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,13 +25,24 @@ public class BookService {
         this.repository = repository;
     }
 
+    // --- Обновленный метод с пагинацией и фильтрацией по жанру ---
+    public Page<Book> find(Genre genre, Pageable pageable) {
+        if (genre != null) {
+            return repository.findByGenre(genre, pageable);
+        }
+        return repository.findAll(pageable);
+    }
+
+    // Старый метод findAll для обратной совместимости (если используется где-то еще)
     public List<Book> findAll(String author) {
         List<Book> all = repository.findAll();
         if (author == null || author.isBlank()) {
             return all;
         }
         return all.stream()
-                .filter(b -> b.author().toLowerCase().contains(author.toLowerCase()))
+                .filter(b -> b.getAuthor() != null
+                        && b.getAuthor().getName() != null
+                        && b.getAuthor().getName().toLowerCase().contains(author.toLowerCase()))
                 .toList();
     }
 
@@ -45,11 +59,18 @@ public class BookService {
             }
         }
 
+        // Проверка на дубликат по названию и автору
         boolean duplicateExists = repository.findAll().stream()
-                .anyMatch(b -> b.title().equalsIgnoreCase(book.title())
-                        && b.author().equalsIgnoreCase(book.author()));
+                .anyMatch(b -> b.getTitle() != null
+                        && b.getAuthor() != null
+                        && b.getAuthor().getName() != null
+                        && book.getAuthor() != null
+                        && book.getAuthor().getName() != null
+                        && b.getTitle().equalsIgnoreCase(book.getTitle())
+                        && b.getAuthor().getName().equalsIgnoreCase(book.getAuthor().getName()));
+
         if (duplicateExists) {
-            throw new DuplicateTitleException("Book with title '" + book.title() + "' already exists");
+            throw new DuplicateTitleException("Book with title '" + book.getTitle() + "' already exists");
         }
 
         Book savedBook = repository.save(book);
@@ -68,18 +89,16 @@ public class BookService {
     }
 
     public Book update(long id, Book book) {
-        if (repository.findById(id).isEmpty()) {
-            throw new BookNotFoundException("Book with id " + id + " not found");
-        }
-        Book updatedBook = new Book(
-                id,
-                book.title(),
-                book.author(),
-                book.year(),
-                book.genre(),
-                book.createdAt()
-        );
-        return repository.save(updatedBook);
+        Book existingBook = repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + id + " not found"));
+
+        // Обновляем поля существующей сущности через сеттеры
+        existingBook.setTitle(book.getTitle());
+        existingBook.setAuthor(book.getAuthor());
+        existingBook.setYear(book.getYear());
+        existingBook.setGenre(book.getGenre());
+
+        return repository.save(existingBook);
     }
 
     public void delete(long id) {

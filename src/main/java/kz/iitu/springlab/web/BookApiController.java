@@ -8,16 +8,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.iitu.springlab.catalog.Book;
+import kz.iitu.springlab.catalog.Genre;
 import kz.iitu.springlab.service.BookService;
 import kz.iitu.springlab.web.dto.BookMapper;
 import kz.iitu.springlab.web.dto.BookRequest;
 import kz.iitu.springlab.web.dto.BookResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Books", description = "The catalogue of books")
 @RestController
@@ -31,10 +33,11 @@ public class BookApiController {
     }
 
     @GetMapping
-    public List<BookResponse> getAll(@RequestParam(required = false) String author) {
-        return bookService.findAll(author).stream()
-                .map(BookMapper::toResponse)
-                .toList();
+    public Page<BookResponse> list(
+            @RequestParam(required = false) Genre genre,
+            @PageableDefault(size = 5, sort = "title") Pageable pageable) {
+
+        return bookService.find(genre, pageable).map(BookMapper::toResponse);
     }
 
     @Operation(summary = "Find a book by its identifier")
