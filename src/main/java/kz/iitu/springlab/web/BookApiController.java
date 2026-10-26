@@ -56,9 +56,11 @@ public class BookApiController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookResponse create(@RequestBody BookRequest request) {
+    public BookResponse create(
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+            @RequestBody BookRequest request) {
         Book bookToCreate = BookMapper.toEntity(request);
-        Book createdBook = bookService.create(bookToCreate);
+        Book createdBook = bookService.create(bookToCreate, idempotencyKey);
         return BookMapper.toResponse(createdBook);
     }
 

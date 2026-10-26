@@ -8,11 +8,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 @Service
 public class BookService {
 
     private final BookRepository repository;
+    // Хранилище для реализации идемпотентности (ключ -> созданная книга)
+    private final Map<String, Book> idempotencyStore = new ConcurrentHashMap<>();
 
     public BookService(BookRepository repository) {
         this.repository = repository;
@@ -32,14 +36,35 @@ public class BookService {
         return repository.findById(id);
     }
 
-    public Book create(Book book) {
+    // Перегруженный метод создания с поддержкой ключа идемпотентности
+    public Book create(Book book, String idempotencyKey) {
+        // Если передан ключ идемпотентности и он уже есть в хранилище, возвращаем ранее созданный результат
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            if (idempotencyStore.containsKey(idempotencyKey)) {
+                return idempotencyStore.get(idempotencyKey);
+            }
+        }
+
         boolean duplicateExists = repository.findAll().stream()
                 .anyMatch(b -> b.title().equalsIgnoreCase(book.title())
                         && b.author().equalsIgnoreCase(book.author()));
         if (duplicateExists) {
             throw new DuplicateTitleException("Book with title '" + book.title() + "' already exists");
         }
-        return repository.save(book);
+
+        Book savedBook = repository.save(book);
+
+        // Сохраняем результат в кеш идемпотентности
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyStore.put(idempotencyKey, savedBook);
+        }
+
+        return savedBook;
+    }
+
+    // Обратная совместимость для вызовов без ключа
+    public Book create(Book book) {
+        return create(book, null);
     }
 
     public Book update(long id, Book book) {
