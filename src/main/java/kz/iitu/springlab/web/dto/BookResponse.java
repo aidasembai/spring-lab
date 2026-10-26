@@ -1,6 +1,6 @@
 package kz.iitu.springlab.web.dto;
 
-import kz.iitu.springlab.web.Genre;
+import kz.iitu.springlab.catalog.Genre;
 import java.time.Instant;
 
 public record BookResponse(

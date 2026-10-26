@@ -1,7 +1,9 @@
 package kz.iitu.springlab.web;
 
 import jakarta.validation.Valid;
+import kz.iitu.springlab.catalog.Author;
 import kz.iitu.springlab.catalog.Book;
+import kz.iitu.springlab.catalog.Genre;
 import kz.iitu.springlab.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,11 +54,15 @@ public class BookPageController {
             return "books/form";
         }
 
+        // Создаем объект Author из имени, пришедшего из формы
+        Author author = new Author();
+        author.setName(form.getAuthor());
+
         Book saved = service.create(new Book(null, form.getTitle(),
-                form.getAuthor(), form.getYear()));
+                author, form.getYear()));
 
         redirect.addFlashAttribute("message",
-                "Book «" + saved.title() + "» has been added");
+                "Book «" + saved.getTitle() + "» has been added");
         return "redirect:/books";
     }
 }

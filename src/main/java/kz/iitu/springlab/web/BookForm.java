@@ -1,10 +1,10 @@
 package kz.iitu.springlab.web;
 
 import jakarta.validation.constraints.*;
-import jakarta.validation.constraints.NotEmpty; // Импорт для валидации списка
+import kz.iitu.springlab.catalog.Genre;
 import kz.iitu.springlab.config.NoDigits;
-import kz.iitu.springlab.web.Genre;
-import java.util.List; // Импорт List
+
+import java.util.List;
 
 public class BookForm {
 
