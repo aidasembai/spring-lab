@@ -1,4 +1,4 @@
-package kz.iitu.springlab.catalog;
+package kz.iitu.springlab.entity;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -22,26 +22,13 @@ public class Author {
 
     public Author() {}
 
-    public Author(String name, String country) {
-        this.name = name;
-        this.country = country;
-    }
-
-    public void addBook(Book book) {
-        books.add(book);
-        book.setAuthor(this);
-    }
-
     // Геттеры и сеттеры
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
-
     public List<Book> getBooks() { return books; }
     public void setBooks(List<Book> books) { this.books = books; }
 }

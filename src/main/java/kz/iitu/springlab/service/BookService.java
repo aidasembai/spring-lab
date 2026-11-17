@@ -1,10 +1,10 @@
 package kz.iitu.springlab.service;
 
-import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookRepository;
 import kz.iitu.springlab.catalog.BookNotFoundException;
 import kz.iitu.springlab.catalog.DuplicateTitleException;
 import kz.iitu.springlab.catalog.Genre;
+import kz.iitu.springlab.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,10 +25,18 @@ public class BookService {
         this.repository = repository;
     }
 
-    // --- Обновленный метод с пагинацией и фильтрацией по жанру ---
+    // --- Метод с пагинацией и фильтрацией по жанру (принимает String) ---
+    public Page<Book> find(String genre, Pageable pageable) {
+        if (genre != null && !genre.isBlank()) {
+            return repository.findByGenre(genre, pageable);
+        }
+        return repository.findAll(pageable);
+    }
+
+    // Перегрузка на случай, если где-то передается Enum Genre
     public Page<Book> find(Genre genre, Pageable pageable) {
         if (genre != null) {
-            return repository.findByGenre(genre, pageable);
+            return repository.findByGenre(genre.name(), pageable);
         }
         return repository.findAll(pageable);
     }

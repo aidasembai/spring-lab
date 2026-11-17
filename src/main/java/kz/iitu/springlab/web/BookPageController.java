@@ -1,9 +1,9 @@
 package kz.iitu.springlab.web;
 
 import jakarta.validation.Valid;
-import kz.iitu.springlab.catalog.Author;
-import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.Genre;
+import kz.iitu.springlab.entity.Author; // <-- Импорт Author
+import kz.iitu.springlab.entity.Book;   // <-- Импорт Book
 import kz.iitu.springlab.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,8 +58,14 @@ public class BookPageController {
         Author author = new Author();
         author.setName(form.getAuthor());
 
-        Book saved = service.create(new Book(null, form.getTitle(),
-                author, form.getYear()));
+        // Создаем книгу через пустой конструктор и сеттеры
+        Book book = new Book();
+        book.setTitle(form.getTitle());
+        book.setYear(form.getYear());
+        book.setAuthor(author);
+        // Если в форме есть поле жанра, можно установить и его: book.setGenre(...)
+
+        Book saved = service.create(book);
 
         redirect.addFlashAttribute("message",
                 "Book «" + saved.getTitle() + "» has been added");

@@ -1,5 +1,6 @@
 package kz.iitu.springlab.catalog;
 
+import kz.iitu.springlab.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -15,13 +16,13 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     // --- 3.1. Derived queries ---
-    List<Book> findByGenre(Genre genre);
+    List<Book> findByGenre(String genre);
 
     List<Book> findByTitleContainingIgnoreCase(String fragment);
 
     List<Book> findByYearBetweenOrderByYearDesc(int from, int to);
 
-    List<Book> findTop3ByGenreOrderByYearDesc(Genre genre);
+    List<Book> findTop3ByGenreOrderByYearDesc(String genre);
 
     long countByAuthorName(String name);        // a nested property
 
@@ -30,7 +31,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             select b from Book b
             where b.genre = :genre and b.year >= :year
             order by b.title""")
-    List<Book> search(@Param("genre") Genre genre, @Param("year") int year);
+    List<Book> search(@Param("genre") String genre, @Param("year") int year);
 
     // --- 3.2. Bulk update query ---
     @Modifying(clearAutomatically = true)
@@ -43,7 +44,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     // --- 4.1. Pagination and Sorting ---
     @EntityGraph(attributePaths = "author")
-    Page<Book> findByGenre(Genre genre, Pageable pageable);
+    Page<Book> findByGenre(String genre, Pageable pageable);
 
     @EntityGraph(attributePaths = "author")
     Page<Book> findAll(Pageable pageable);
