@@ -1,4 +1,4 @@
-package kz.iitu.springlab.catalog;
+package kz.iitu.springlab.entity;
 
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -20,17 +20,11 @@ public class Tag {
 
     public Tag() {}
 
-    public Tag(String name) {
-        this.name = name;
-    }
-
     // Геттеры и сеттеры
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
     public Set<Book> getBooks() { return books; }
     public void setBooks(Set<Book> books) { this.books = books; }
 }

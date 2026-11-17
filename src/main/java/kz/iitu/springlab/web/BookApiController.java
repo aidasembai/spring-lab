@@ -7,8 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kz.iitu.springlab.catalog.Book;
-import kz.iitu.springlab.catalog.Genre;
+import kz.iitu.springlab.entity.Book; // Добавлен импорт Book
 import kz.iitu.springlab.service.BookService;
 import kz.iitu.springlab.web.dto.BookMapper;
 import kz.iitu.springlab.web.dto.BookRequest;
@@ -34,7 +33,7 @@ public class BookApiController {
 
     @GetMapping
     public Page<BookResponse> list(
-            @RequestParam(required = false) Genre genre,
+            @RequestParam(required = false) String genre, // Принимаем жанр как String
             @PageableDefault(size = 5, sort = "title") Pageable pageable) {
 
         return bookService.find(genre, pageable).map(BookMapper::toResponse);
